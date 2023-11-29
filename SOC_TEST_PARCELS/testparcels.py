@@ -134,7 +134,7 @@ for s3_file in s3_files:
         # Run tests
         pytest_args = [__file__, '--verbose']
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-        report_path = f'C:\\Users\\ndece\\Desktop\\SOC_TEST_PARCELS\\Desktop\\SOC_PARCEL_TEST_{os.path.basename(s3_file)}_{timestamp}.html'
+        report_path = f'C:\\Users\\ndece\\Desktop\\SOC_TEST\\SOC_TEST_PARCELS\\Desktop\\SOC_PARCEL_TEST_{os.path.basename(s3_file)}_{timestamp}.html'
         pytest_args += [f'--html={report_path}', '--self-contained-html']
         pytest.main(pytest_args)
 
