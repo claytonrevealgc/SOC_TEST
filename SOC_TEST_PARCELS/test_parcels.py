@@ -63,9 +63,34 @@ def get_csv_from_s3(bucket_name, object_key):
         raise ValueError(f"Error accessing S3: {e}")
 
 
+def list_files_recursive(parent_folder):
+    all_files = []
+    for root, dirs, files in os.walk(parent_folder):
+        for file in files:
+            file_path = os.path.join(root, file)
+            all_files.append(file_path)
+    return all_files
+
+
 # S3 bucket name and object key prefix
 BUCKET_NAME = "rgc-labstorage"
 OBJECT_KEY_PREFIX = "Parcels/loveland/wkt/"
+
+# Specify the source and destination folders
+source_folder = "loveland/wkt"
+destination_folder = "wkt1"
+
+# Transform folder structure
+os.makedirs(destination_folder, exist_ok=True)
+all_source_files = list_files_recursive(source_folder)
+
+# Move files to the destination folder
+for source_file in all_source_files:
+    if source_file.endswith(".csv"):
+        destination_file = os.path.join(
+            destination_folder, os.path.basename(source_file))
+        os.rename(source_file, destination_file)
+        print(f"Moved file from {source_file} to {destination_file}")
 
 # Get the latest files in S3
 s3_files = get_latest_s3_files(BUCKET_NAME, OBJECT_KEY_PREFIX)
@@ -90,7 +115,7 @@ for s3_file in s3_files:
         # Parameters for the format test
         @pytest.mark.parametrize("expected_columns", [
             ["geoid", "parcelnumb", "city", "path",
-             "owner", "lat", "lon", "address",]
+             "owner", "lat", "lon", "address", ]
         ])
         def test_column_format(expected_columns):
             check_column_format(expected_columns)
